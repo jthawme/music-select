@@ -2,7 +2,7 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
-    "serve": "netlify dev",
+    "serve": "dotenv -- netlify dev",
     "dev": "rollup -c -w",
     "start": "sirv public",
     "build": "npm-run-all --parallel build:**",

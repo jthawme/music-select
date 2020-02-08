@@ -1,29 +1,24 @@
 <script>
-  import api from "../utils/api";
+  import { Router, Route } from "svelte-routing";
 
-  function onSubmit(e) {
-    const formData = new FormData(e.target);
+  import GuardedRoute from "../components/Router/GuardedRoute.svelte";
+  import Dashboard from "./Dashboard.svelte";
+  import Login from "./Login.svelte";
+  import SignOut from "../components/Auth/SignOut.svelte";
 
-    api.search(formData.get("artist"), formData.get("album"));
-  }
+  export let url = "";
 </script>
 
 <style>
 
 </style>
 
-<main>
-  <form on:submit|preventDefault={onSubmit}>
-    <label>
-      Artist
-      <br />
-      <input type="search" placeholder="artist" name="artist" />
-    </label>
-    <label>
-      Album
-      <br />
-      <input type="search" placeholder="album" name="album" />
-    </label>
-    <button type="submit">Search</button>
-  </form>
-</main>
+<Router {url}>
+  <GuardedRoute path="/" component={Dashboard} redirect="/login" />
+  <GuardedRoute
+    path="/login"
+    component={Login}
+    shouldBeLoggedOut
+    redirect="/" />
+  <Route path="/logout" component={SignOut} />
+</Router>

@@ -4,3 +4,4 @@
 .DS_Store
 functions-built
 .env
+functions/config/serviceAccount.json

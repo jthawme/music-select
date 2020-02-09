@@ -14,11 +14,11 @@
 </style>
 
 <Router {url}>
-  <GuardedRoute path="/" component={Dashboard} redirect="/login" />
   <GuardedRoute
     path="/login"
     component={Login}
     shouldBeLoggedOut
     redirect="/" />
   <Route path="/logout" component={SignOut} />
+  <GuardedRoute path="/*" component={Dashboard} redirect="/login" />
 </Router>

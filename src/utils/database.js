@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import api from "./api";
 import { isLoggedIn } from "../store/auth";
-import { genres, albums } from "../store/data";
+import { genres, albums, info } from "../store/data";
 
 const prepareTag = tag => {
   return tag
@@ -10,8 +10,12 @@ const prepareTag = tag => {
     .join(" ");
 };
 
-const getUid = (artist, album) => {
+export const getUid = (artist, album) => {
   return btoa(`${artist}!@!${album}`);
+};
+
+export const getImage = (image, size = 300) => {
+  return `https://lastfm.freetls.fastly.net/i/u/${size}x${size}/${image}`;
 };
 
 const checkedLoggedIn = () => {
@@ -47,6 +51,22 @@ const database = {
 
       genres.set(currentGenres);
       albums.set(currentAlbums);
+    });
+  },
+  setListening: (artist, album) => {
+    checkedLoggedIn();
+
+    return new Promise((resolve, reject) => {
+      const currentInfo = get(info);
+      const uid = getUid(artist, album);
+
+      if (!currentInfo.listening.includes(uid)) {
+        currentInfo.listening.push(uid);
+      }
+
+      info.set(currentInfo);
+
+      resolve();
     });
   }
 };

@@ -3,11 +3,11 @@ import { RESPONSES } from "./config/constants";
 import { loggedInRoute } from "./config/utils";
 
 export async function handler(event, context) {
-  // const { error } = await loggedInRoute(event);
+  const { error } = await loggedInRoute(event);
 
-  // if (error) {
-  //   return error;
-  // }
+  if (error) {
+    return error;
+  }
 
   const albumMbid = event.queryStringParameters.mbid;
   const artist = event.queryStringParameters.artist;

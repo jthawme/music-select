@@ -2,7 +2,7 @@
   import { Router, Link, Route } from "svelte-routing";
   import Redirect from "./Redirect.svelte";
 
-  import { hasResolvedLogin, isLoggedIn } from "../Auth/auth";
+  import { hasResolvedLogin, isLoggedIn } from "../../store/auth";
 
   export let path = "";
   export let component = null;

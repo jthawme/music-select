@@ -3,7 +3,8 @@ import axios from "axios";
 const API_BASE = "https://ws.audioscrobbler.com/2.0/";
 
 const METHODS = {
-  SEARCH: "album.search"
+  SEARCH: "album.search",
+  INFO: "album.getinfo"
 };
 
 export const queryBuilder = args => {
@@ -36,4 +37,17 @@ export const searchAlbum = albumName => {
       album: albumName
     })
   );
+};
+
+export const getAlbumInfo = (mbid, artist, album) => {
+  const args = mbid
+    ? {
+        mbid
+      }
+    : {
+        artist,
+        album
+      };
+
+  return safeFetch(urlBuilder(METHODS.INFO, args));
 };

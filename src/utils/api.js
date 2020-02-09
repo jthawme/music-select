@@ -1,4 +1,4 @@
-import { TOKEN_KEY } from "../components/Auth/auth";
+import { TOKEN_KEY } from "../store/auth";
 const ENDPOINT_PREFIX = "/.netlify/functions";
 
 const getToken = () => {
@@ -18,6 +18,14 @@ const safeFetch = (route, args = {}) => {
     }
   })
     .then(resp => resp.json())
+    .then(data => {
+      if (data.error) {
+        throw new Error(data.message);
+        return;
+      }
+
+      return data;
+    })
     .catch(err => {
       console.error("API Error", err);
       throw err;
@@ -27,6 +35,13 @@ const safeFetch = (route, args = {}) => {
 const api = {
   search: (artist, album) => {
     return safeFetch("/search", { artist, album });
+  },
+  info: (mbid, artist, album) => {
+    if (mbid) {
+      return safeFetch("/info", { mbid });
+    } else {
+      return safeFetch("/info", { artist, album });
+    }
   }
 };
 

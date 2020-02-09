@@ -1,25 +1,12 @@
-import * as admin from "firebase-admin";
 import { searchAlbum } from "./src/lastfm";
-import { RESPONSES, getToken } from "./config/constants";
-
-import serviceAccount from "./config/serviceAccount.json";
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://music-select-6b777.firebaseio.com"
-});
+import { RESPONSES } from "./config/constants";
+import { loggedInRoute } from "./config/utils";
 
 export async function handler(event, context) {
-  const idToken = getToken(event.headers.authorization);
+  const { error } = await loggedInRoute(event);
 
-  if (!idToken) {
-    return RESPONSES.NOT_LOGGED_IN;
-  }
-
-  const decodedToken = await admin.auth().verifyIdToken(idToken);
-
-  if (!decodedToken) {
-    return RESPONSES.NOT_LOGGED_IN;
+  if (error) {
+    return error;
   }
 
   const albumName = event.queryStringParameters.album;

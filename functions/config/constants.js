@@ -6,6 +6,13 @@ export const RESPONSES = {
       message: "Not logged in"
     })
   },
+  NO_ALBUM: {
+    statusCode: 404,
+    body: JSON.stringify({
+      error: true,
+      message: "No album with this information"
+    })
+  },
   GENERIC: {
     statusCode: 400,
     body: JSON.stringify({
@@ -13,8 +20,4 @@ export const RESPONSES = {
       message: "Error processing request"
     })
   }
-};
-
-export const getToken = header => {
-  return header ? header.substring("Bearer ".length) : "";
 };

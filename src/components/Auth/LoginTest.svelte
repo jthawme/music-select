@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte";
-  import * as firebaseui from "firebaseui";
-  import "firebaseui/dist/firebaseui.css";
-  import firebase from "./firebase";
+  import * as firebaseui from "../../utils/firebaseui/esm";
+  import "../../utils/firebaseui/firebaseui.css";
+  import firebase from "../../utils/firebase";
 
   const authUiConfig = {
     signInSuccessUrl: "/",

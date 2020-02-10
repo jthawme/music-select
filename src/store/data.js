@@ -4,13 +4,13 @@ import { userInfo, isLoggedIn, hydratedData } from "./auth";
 import { db } from "../utils/firebase";
 
 export const genres = writable({});
-export const albums = writable({});
+export const albums = writable([]);
 export const info = writable({
   listening: []
 });
 
 const getUserId = () => get(userInfo).id;
-const getUserRef = () => db.collection(getUserId());
+export const getUserRef = () => db.collection(getUserId());
 
 let autoSaveTimer = 0;
 
@@ -23,17 +23,23 @@ export function saveData() {
     return false;
   }
 
-  return Promise.all([
-    getUserRef()
-      .doc("genres")
-      .set(get(genres)),
-    getUserRef()
-      .doc("albums")
-      .set(get(albums)),
-    getUserRef()
-      .doc("info")
-      .set(get(info))
-  ]).then(() => {
+  const batch = db.batch();
+
+  batch.set(getUserRef().doc("genres"), get(genres));
+  batch.set(getUserRef().doc("info"), get(info));
+
+  const currentAlbums = get(albums);
+  currentAlbums.forEach(album => {
+    batch.set(
+      getUserRef()
+        .doc("albums")
+        .collection("list")
+        .doc(album.uid),
+      album
+    );
+  });
+
+  return batch.commit().then(() => {
     restart();
     return true;
   });
@@ -50,13 +56,14 @@ export async function populateStores() {
       .get(),
     getUserRef()
       .doc("albums")
+      .collection("list")
       .get(),
     getUserRef()
       .doc("info")
       .get()
   ]).then(([genresDoc, albumsDoc, infoDoc]) => {
     genresDoc.exists && genres.set(genresDoc.data());
-    albumsDoc.exists && albums.set(albumsDoc.data());
+    albums.set(albumsDoc.docs.map(doc => doc.data()));
     infoDoc.exists && info.set(infoDoc.data());
   });
 }

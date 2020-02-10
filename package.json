@@ -32,6 +32,7 @@
     "firebaseui": "^4.4.0",
     "fuse.js": "^3.4.6",
     "netlify-lambda": "^1.6.3",
+    "normalize.css": "^8.0.1",
     "sirv-cli": "^0.4.4",
     "svelte-routing": "^1.4.0"
   }

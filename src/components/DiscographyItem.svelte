@@ -6,10 +6,13 @@
   export let artist;
   export let name;
   export let image;
-  export let mbid;
 
-  function setListening() {
-    database.setListening(artist, name);
+  function toggleListening() {
+    if (!isListening) {
+      database.setListening(artist, name);
+    } else {
+      database.removeListening(artist, name);
+    }
   }
 
   $: isListening = $info.listening.includes(getUid(artist, name));
@@ -52,5 +55,6 @@
   <img src={getImage(image)} alt={artist} />
   <h2>{name}</h2>
   <h3>{artist}</h3>
-  <button on:click={setListening} disabled={isListening}>Set Listening</button>
+  {isListening ? 'Listening' : ''}
+  <button on:click={toggleListening}>Toggle Listening</button>
 </div>

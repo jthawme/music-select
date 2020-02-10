@@ -1,3 +1,4 @@
+import "normalize.css";
 import App from "./pages/App.svelte";
 
 const app = new App({

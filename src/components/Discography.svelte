@@ -4,13 +4,14 @@
 </script>
 
 <style lang="scss">
-  div {
+  .pool {
     display: flex;
+
     flex-wrap: wrap;
   }
 </style>
 
-<div>
+<div class="pool">
   {#each Object.values($albums) as item}
     <DiscographyItem {...item} />
   {/each}

@@ -14,33 +14,38 @@
 </script>
 
 <style lang="scss">
-  div {
-    display: grid;
+  .container {
+    display: flex;
 
-    grid-template-columns: min-content 1fr;
-    grid-template-rows: min-content 1fr;
+    margin-bottom: 10px;
   }
 
   img {
-    grid-column: 1;
-    grid-row: 1 / span 2;
+    width: 100%;
   }
 
-  h2 {
-    grid-column: 2;
-    grid-row: 1;
+  .image {
+    margin-right: 10px;
+    width: 150px;
   }
 
+  h2,
   h3 {
-    grid-column: 2;
-    grid-row: 2;
+    font-size: 16px;
+  }
+
+  .info {
+    flex: 1 0 0;
   }
 </style>
 
-<div>
-  <img src={image} alt={artist} />
-  <h2>{name}</h2>
-  <h3>{artist}</h3>
-  {mbid}
-  <button on:click={addAlbum}>Add</button>
+<div class="container">
+  <div class="image">
+    <img src={image} alt={artist} />
+  </div>
+  <div class="info">
+    <h2>{name}</h2>
+    <h3>{artist}</h3>
+    <button on:click={addAlbum}>Add</button>
+  </div>
 </div>

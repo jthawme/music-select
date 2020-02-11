@@ -1,6 +1,9 @@
 <script>
   import { link } from "svelte-routing";
+  import { HomeIcon } from "svelte-feather-icons";
   import SearchForm from "../SearchForm.svelte";
+  import Icon from "../Icon.svelte";
+  import Button from "../Button.svelte";
 
   let search = false;
 
@@ -15,46 +18,41 @@
 
     display: flex;
 
-    align-items: center;
+    justify-content: space-between;
 
-    background-color: red;
+    padding: 10px var(--size-unit-4);
 
-    padding: 10px;
+    background-color: var(--color-accent);
 
     height: 64px;
   }
 
-  .search {
-    position: absolute;
+  nav {
+    display: flex;
 
-    bottom: 100%;
-    left: 0;
-
-    width: 100%;
-    height: calc(100vh - 64px);
-
-    background-color: #e5e5e5;
-
-    padding: 10px;
+    color: white;
   }
 
-  a {
-    color: white;
-
+  :global(nav a) {
     margin-right: 10px;
   }
 </style>
 
 <div class="outer">
-  <a href="/" use:link>Home</a>
-  <a href="/library" use:link>Library</a>
-  <a href="/logout" use:link>Log Out</a>
+  <nav>
+    <Button to="/" icon="home" type="tertiary" noPadding>Home</Button>
+    <Button to="/library" icon="music" type="tertiary" noPadding>
+      Library
+    </Button>
+  </nav>
 
-  <button on:click={toggleSearch}>Add</button>
+  <Button icon="plus" noPadding type="tertiary" size="large" />
+
+  <!-- <button on:click={toggleSearch}>Add</button>
 
   {#if search}
     <div class="search">
       <SearchForm />
     </div>
-  {/if}
+  {/if} -->
 </div>

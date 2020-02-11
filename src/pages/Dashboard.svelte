@@ -8,14 +8,16 @@
   import Library from "./Library.svelte";
 </script>
 
-<style>
+<style lang="scss">
   header {
-    position: fixed;
+    position: absolute;
 
     top: 0;
     left: 0;
 
     width: 100%;
+
+    z-index: 10;
   }
 
   aside {
@@ -25,6 +27,12 @@
     left: 0;
 
     width: 100%;
+
+    z-index: 10;
+  }
+
+  main {
+    padding-bottom: var(--size-action-bar);
   }
 </style>
 
@@ -36,7 +44,9 @@
   <ActionBar />
 </aside>
 
-<Router>
-  <Route path="/library" component={Library} />
-  <Route path="/" component={Home} />
-</Router>
+<main>
+  <Router>
+    <Route path="/library" component={Library} />
+    <Route path="/" component={Home} />
+  </Router>
+</main>

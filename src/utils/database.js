@@ -1,8 +1,7 @@
 import { get } from "svelte/store";
 import api from "./api";
 import { isLoggedIn } from "../store/auth";
-import { genres, albums, info, getUserRef } from "../store/data";
-import { db } from "./firebase";
+import { genres, albums, info, getUserRef, loading } from "../store/data";
 
 const prepareTag = tag => {
   return tag
@@ -28,6 +27,7 @@ const checkedLoggedIn = () => {
 const database = {
   addAlbum: (mbid, artist, album) => {
     checkedLoggedIn();
+    loading.set(true);
     return api.info(mbid, artist, album).then(albumInfo => {
       const uid = getUid(artist, album);
       const currentGenres = get(genres);
@@ -49,11 +49,13 @@ const database = {
         name: albumInfo.name,
         artist: albumInfo.artist,
         image: albumInfo.image[0]["#text"].split("/").pop(),
-        lastListened: null
+        lastListened: null,
+        dateAdded: new Date()
       });
 
       genres.set(currentGenres);
       albums.set(currentAlbums);
+      loading.set(false);
     });
   },
   setListening: (artist, album) => {

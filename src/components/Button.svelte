@@ -3,16 +3,18 @@
   import Icon from "./Icon.svelte";
 
   export let icon = "";
-  export let onClick = () => {};
-  export let to;
+  export let to = false;
 
+  export let buttonType = "button";
   export let type = "primary"; // primary / secondary / tertiary
   export let weak = false;
 
-  export let noPadding;
-  export let noButtonMargin;
+  export let noPadding = false;
+  export let noButtonMargin = false;
 
   export let size = "normal";
+
+  export let disabled = false;
 
   function getIconSize() {
     return {
@@ -30,13 +32,14 @@
     align-items: center;
     justify-content: center;
 
-    padding: 10px 20px;
     border-radius: 32px;
 
     text-decoration: none;
 
     outline: none;
     border: 0;
+
+    cursor: pointer;
   }
 
   .primary {
@@ -53,10 +56,6 @@
     color: inherit;
   }
 
-  .noPadding {
-    padding: 0;
-  }
-
   .icon {
     margin-right: 6px;
     margin-top: 2px;
@@ -65,16 +64,40 @@
   .noButtonMargin .icon {
     margin-right: 0;
   }
+
+  .small {
+    padding: 5px 10px;
+
+    font-size: var(--font-size-small);
+  }
+
+  .normal {
+    padding: 10px 20px;
+
+    font-size: var(--font-size-normal);
+  }
+
+  .noPadding {
+    padding: 0;
+  }
+
+  a[disabled],
+  button[disabled] {
+    opacity: 0.5;
+
+    cursor: default;
+  }
 </style>
 
 {#if to}
   <a
+    on:click
     href={to}
     use:link
     class:noPadding
     class:noButtonMargin
     class:weak
-    class={type}>
+    class={`${type} ${size}`}>
     {#if icon}
       <span class="icon">
         <Icon size={getIconSize()} name={icon} />
@@ -84,11 +107,13 @@
   </a>
 {:else}
   <button
-    on:click={onClick}
+    on:click
     class:noPadding
     class:noButtonMargin
     class:weak
-    class={type}>
+    {disabled}
+    class={`${type} ${size}`}
+    type={buttonType}>
     {#if icon}
       <span class="icon">
         <Icon size={getIconSize()} name={icon} />

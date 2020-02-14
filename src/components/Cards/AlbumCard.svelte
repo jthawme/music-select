@@ -1,11 +1,13 @@
 <script>
-  import Button from "./Button.svelte";
+  import Button from "../Button.svelte";
+  import { getImage } from "../../utils/database";
 
-  export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+  const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-  export let min = 0;
-  export let max = Number.MAX_SAFE_INTEGER;
-  export let onUpdate;
+  export let artist = "";
+  export let name = "";
+  export let image = "";
+  export let isListening = false;
 
   const MAX_HANDLE = 1;
   const MIN_HANDLE = 0;
@@ -68,11 +70,6 @@
     open = Math.abs(xPos) > threshold;
 
     ticking = false;
-
-    // // If wanted to stop dragging when they meet
-    // if (val >= clampMax || val <= clampMin) {
-    //   onHandleUp();
-    // }
   }
 
   function getContainerPosition() {
@@ -133,6 +130,8 @@
   .outer {
     position: relative;
 
+    width: 100%;
+
     margin: var(--size-unit-2) 0;
   }
 
@@ -172,10 +171,17 @@
 
   .info {
     flex-grow: 1;
+    min-width: 0;
+
+    margin-right: var(--size-unit-2);
   }
 
   .info p {
     margin: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .image img {
@@ -233,22 +239,36 @@
     on:touchstart={onHandleDown}
     style={dragging && `transform: translate3d(${xPos}px, 0, 0)`}>
     <div class="image">
-      <img src="https://f4.bcbits.com/img/a3643784525_10.jpg" alt="" />
+      <img src={getImage(image)} alt="" />
     </div>
     <div class="info">
-      <p class="title">Marigold</p>
-      <p class="artist">Pinegrove</p>
+      <p class="title">{name}</p>
+      <p class="artist">{artist}</p>
     </div>
     <div class="cta" />
   </div>
 
   <div class="actions">
-    <Button icon="stop" noButtonMargin noPadding size="large" type="tertiary" />
     <Button
       icon="trash"
       noButtonMargin
       noPadding
       size="large"
       type="tertiary" />
+    {#if isListening}
+      <Button
+        icon="stop"
+        noButtonMargin
+        noPadding
+        size="large"
+        type="tertiary" />
+    {:else}
+      <Button
+        icon="play"
+        noButtonMargin
+        noPadding
+        size="large"
+        type="tertiary" />
+    {/if}
   </div>
 </div>

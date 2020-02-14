@@ -1,6 +1,6 @@
 <script>
   import Title from "./Title.svelte";
-  import AlbumCard from "./AlbumCard.svelte";
+  import AlbumCard from "./Cards/AlbumCard.svelte";
 </script>
 
 <style lang="scss">

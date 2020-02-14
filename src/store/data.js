@@ -3,6 +3,7 @@ import { writable, get } from "svelte/store";
 import { userInfo, isLoggedIn, hydratedData } from "./auth";
 import { db } from "../utils/firebase";
 
+export const loading = writable(false);
 export const genres = writable({});
 export const albums = writable([]);
 export const info = writable({
@@ -66,4 +67,8 @@ export async function populateStores() {
     albums.set(albumsDoc.docs.map(doc => doc.data()));
     infoDoc.exists && info.set(infoDoc.data());
   });
+}
+
+export function isListening(uid) {
+  return get(info).listening.includes(uid);
 }

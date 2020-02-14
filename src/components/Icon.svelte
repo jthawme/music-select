@@ -14,7 +14,8 @@
     ZapIcon,
     SearchIcon,
     CornerLeftDownIcon,
-    LoaderIcon
+    LoaderIcon,
+    PlayCircleIcon
   } from "svelte-feather-icons";
 
   export let name = "";
@@ -37,7 +38,8 @@
     zap: ZapIcon,
     search: SearchIcon,
     cornerLeftDown: CornerLeftDownIcon,
-    loader: LoaderIcon
+    loader: LoaderIcon,
+    play: PlayCircleIcon
   };
 
   function getIcon() {

@@ -30,7 +30,7 @@
     color: var(--color-accent);
     margin: var(--size-unit-4) 0 var(--size-unit-1);
 
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-regular);
   }
 
   img {

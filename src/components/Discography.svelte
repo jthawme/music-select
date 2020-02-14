@@ -1,18 +1,25 @@
 <script>
-  import { albums } from "../store/data";
-  import DiscographyItem from "./DiscographyItem.svelte";
+  import { albums, isListening } from "../store/data";
+
+  import AlbumCard from "./Cards/AlbumCard.svelte";
+  import Wrapper from "./Layout/Wrapper.svelte";
 </script>
 
 <style lang="scss">
   .pool {
     display: flex;
 
-    flex-wrap: wrap;
+    flex-direction: column;
+
+    padding-top: var(--size-header);
+    background-color: var(--color-background-light);
   }
 </style>
 
 <div class="pool">
   {#each Object.values($albums) as item}
-    <DiscographyItem {...item} />
+    <Wrapper>
+      <AlbumCard {...item} isListening={isListening(item.uid)} />
+    </Wrapper>
   {/each}
 </div>

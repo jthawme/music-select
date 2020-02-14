@@ -3,6 +3,8 @@
 
   import Header from "../components/Layout/Header.svelte";
   import ActionBar from "../components/Layout/ActionBar.svelte";
+  import AddAlbum from "../components/AddAlbum/AddAlbum.svelte";
+  import Footer from "../components/Layout/Footer.svelte";
 
   import Home from "./Home.svelte";
   import Library from "./Library.svelte";
@@ -17,7 +19,7 @@
 
     width: 100%;
 
-    z-index: 10;
+    z-index: 20;
   }
 
   aside {
@@ -28,11 +30,11 @@
 
     width: 100%;
 
-    z-index: 10;
+    z-index: 20;
   }
 
-  main {
-    padding-bottom: var(--size-action-bar);
+  :global(body.locked) {
+    overflow: hidden;
   }
 </style>
 
@@ -46,7 +48,10 @@
 
 <main>
   <Router>
+    <Route path="/add" component={AddAlbum} />
     <Route path="/library" component={Library} />
     <Route path="/" component={Home} />
   </Router>
 </main>
+
+<Footer />

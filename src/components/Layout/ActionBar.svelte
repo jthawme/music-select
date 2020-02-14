@@ -46,13 +46,5 @@
     </Button>
   </nav>
 
-  <Button icon="plus" noPadding type="tertiary" size="large" />
-
-  <!-- <button on:click={toggleSearch}>Add</button>
-
-  {#if search}
-    <div class="search">
-      <SearchForm />
-    </div>
-  {/if} -->
+  <Button icon="plus" to="/add" noPadding type="tertiary" size="large" />
 </div>

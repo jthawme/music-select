@@ -1,6 +1,6 @@
 import { writable, get } from "svelte/store";
 import firebase from "../utils/firebase";
-import { populateStores, subscribeData } from "./data";
+import { listenTo } from "./data";
 
 export const hasResolvedLogin = writable(false);
 export const isLoggedIn = writable(false);
@@ -21,12 +21,14 @@ firebase.auth().onAuthStateChanged(
       });
 
       if (!get(hydratedData)) {
-        subscribeData();
-
         Promise.all([
-          user.getIdToken().then(accessToken => userToken.set(accessToken)),
-          populateStores()
-        ]).then(() => hydratedData.set(true));
+          user.getIdToken().then(accessToken => userToken.set(accessToken))
+        ]).then(() => {
+          hydratedData.set(true);
+          listenTo("albums");
+          listenTo("genres");
+          listenTo("listening");
+        });
       }
     } else {
       console.log("user signed out");

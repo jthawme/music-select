@@ -1,7 +1,9 @@
 import { get } from "svelte/store";
 import api from "./api";
+import { db } from "./firebase";
 import { isLoggedIn } from "../store/auth";
-import { genres, albums, info, getUserRef, loading } from "../store/data";
+import { genres, listening, getUserRef, loading } from "../store/data";
+import { TOP_TAGS } from "../store/constants";
 
 const prepareTag = tag => {
   return tag
@@ -14,8 +16,13 @@ export const getUid = (artist, album) => {
   return btoa(`${artist}!@!${album}`);
 };
 
-export const getImage = (image, size = 300) => {
-  return `https://lastfm.freetls.fastly.net/i/u/${size}x${size}/${image}`;
+export const IMAGE_SIZES = {
+  SMALL: "174s",
+  NORMAL: "300x300"
+};
+
+export const getImage = (image, size = IMAGE_SIZES.NORMAL) => {
+  return `https://lastfm.freetls.fastly.net/i/u/${size}/${image}`;
 };
 
 const checkedLoggedIn = () => {
@@ -29,72 +36,98 @@ const database = {
     checkedLoggedIn();
     loading.set(true);
     return api.info(mbid, artist, album).then(albumInfo => {
+      const batch = db.batch();
+
       const uid = getUid(artist, album);
       const currentGenres = get(genres);
       albumInfo.tags.tag.forEach(tag => {
         let tagName = prepareTag(tag.name);
-        if (!currentGenres[tagName]) {
-          currentGenres[tagName] = [];
-        }
 
-        if (!currentGenres[tagName].includes(uid)) {
-          currentGenres[tagName].push(uid);
+        if (TOP_TAGS.includes(tagName)) {
+          if (!currentGenres[tagName]) {
+            currentGenres[tagName] = [];
+          }
+
+          if (!currentGenres[tagName].includes(uid)) {
+            currentGenres[tagName].push(uid);
+          }
+
+          batch.set(
+            getUserRef().doc("genres"),
+            {
+              [tagName]: currentGenres[tagName]
+            },
+            { merge: true }
+          );
         }
       });
 
-      const currentAlbums = get(albums);
-      currentAlbums.push({
-        uid: uid,
-        id: mbid,
-        name: albumInfo.name,
-        artist: albumInfo.artist,
-        image: albumInfo.image[0]["#text"].split("/").pop(),
-        lastListened: null,
-        dateAdded: new Date()
-      });
+      batch.set(
+        getUserRef().doc("albums"),
+        {
+          [uid]: {
+            uid: uid,
+            id: mbid,
+            name: albumInfo.name,
+            artist: albumInfo.artist,
+            image: albumInfo.image[0]["#text"].split("/").pop(),
+            lastListened: null,
+            dateAdded: new Date()
+          }
+        },
+        { merge: true }
+      );
 
-      genres.set(currentGenres);
-      albums.set(currentAlbums);
-      loading.set(false);
+      return batch.commit().then(() => {
+        loading.set(false);
+        return true;
+      });
     });
   },
   setListening: (artist, album) => {
     checkedLoggedIn();
 
-    return new Promise((resolve, reject) => {
-      const currentInfo = get(info);
-      const currentAlbums = get(albums);
-      const uid = getUid(artist, album);
+    const uid = getUid(artist, album);
+    const currentListening = get(listening);
 
-      if (!currentInfo.listening.includes(uid)) {
-        currentInfo.listening.push(uid);
+    if (!currentListening.includes(uid)) {
+      const batch = db.batch();
 
-        const idx = currentAlbums.findIndex(album => album.uid === uid);
+      currentListening.push(uid);
 
-        currentAlbums[idx].lastListened = new Date();
+      batch.update(getUserRef().doc("listening"), {
+        listening: currentListening
+      });
 
-        info.set(currentInfo);
-        albums.set(currentAlbums);
-      }
+      batch.update(
+        getUserRef()
+          .doc("albums")
+          .collection("list")
+          .doc(uid),
+        {
+          lastListened: new Date()
+        }
+      );
 
-      resolve();
-    });
+      return batch.commit();
+    }
+
+    return Promise.reject("Not listening");
   },
   removeListening: (artist, album) => {
     checkedLoggedIn();
 
     return new Promise((resolve, reject) => {
-      const currentInfo = get(info);
+      const currentListening = get(listening);
       const uid = getUid(artist, album);
-      const uidIndex = currentInfo.listening.indexOf(uid);
+      const uidIndex = currentListening.indexOf(uid);
+      currentListening.splice(uidIndex, 1);
 
-      if (uidIndex >= 0) {
-        currentInfo.listening.splice(uidIndex, 1);
-
-        info.set(currentInfo);
-      }
-
-      resolve();
+      return getUserRef()
+        .doc("listening")
+        .update({
+          listening: currentListening
+        });
     });
   },
   getFromIds: ids => {

@@ -1,74 +1,43 @@
-import { writable, get } from "svelte/store";
+import { writable, get, derived } from "svelte/store";
 
-import { userInfo, isLoggedIn, hydratedData } from "./auth";
+import { userInfo } from "./auth";
 import { db } from "../utils/firebase";
 
 export const loading = writable(false);
 export const genres = writable({});
 export const albums = writable([]);
-export const info = writable({
-  listening: []
+export const sortedAlbums = derived(albums, $albums => {
+  const albumList = Object.keys($albums).map(key => $albums[key]);
+  albumList.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    return 0;
+  });
+
+  return albumList;
 });
+export const listening = writable([]);
+
+const dbStores = { genres, albums, listening };
 
 const getUserId = () => get(userInfo).id;
 export const getUserRef = () => db.collection(getUserId());
 
-let autoSaveTimer = 0;
-
-export function saveData() {
-  clearTimeout(autoSaveTimer);
-  const restart = () => (autoSaveTimer = setTimeout(() => saveData(), 2500));
-
-  if (!get(isLoggedIn) || !get(hydratedData)) {
-    restart();
-    return false;
-  }
-
-  const batch = db.batch();
-
-  batch.set(getUserRef().doc("genres"), get(genres));
-  batch.set(getUserRef().doc("info"), get(info));
-
-  const currentAlbums = get(albums);
-  currentAlbums.forEach(album => {
-    batch.set(
-      getUserRef()
-        .doc("albums")
-        .collection("list")
-        .doc(album.uid),
-      album
-    );
-  });
-
-  return batch.commit().then(() => {
-    restart();
-    return true;
-  });
-}
-
-export function subscribeData() {
-  saveData();
-}
-
-export async function populateStores() {
-  Promise.all([
-    getUserRef()
-      .doc("genres")
-      .get(),
-    getUserRef()
-      .doc("albums")
-      .collection("list")
-      .get(),
-    getUserRef()
-      .doc("info")
-      .get()
-  ]).then(([genresDoc, albumsDoc, infoDoc]) => {
-    genresDoc.exists && genres.set(genresDoc.data());
-    albums.set(albumsDoc.docs.map(doc => doc.data()));
-    infoDoc.exists && info.set(infoDoc.data());
-  });
+export function listenTo(key) {
+  getUserRef()
+    .doc(key)
+    .onSnapshot(doc => {
+      console.log(`setting ${key}`, doc.exists);
+      if (doc.exists) {
+        dbStores[key].set(doc.data());
+      }
+    });
 }
 
 export function isListening(uid) {
-  return get(info).listening.includes(uid);
+  return get(listening).includes(uid);
 }

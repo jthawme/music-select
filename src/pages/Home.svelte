@@ -7,6 +7,8 @@
 
 </style>
 
-<Suggestion />
+<div>
+  <Suggestion />
 
-<ListeningList />
+  <ListeningList />
+</div>

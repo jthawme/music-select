@@ -1,9 +1,13 @@
 <script>
   import Button from "../Button.svelte";
-  import { getImage } from "../../utils/database";
+  import { getImage, IMAGE_SIZES } from "../../utils/database";
 
   const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
+  export let lastListened;
+  export let dateAdded;
+  export let id;
+  export let uid;
   export let artist = "";
   export let name = "";
   export let image = "";
@@ -239,7 +243,7 @@
     on:touchstart={onHandleDown}
     style={dragging && `transform: translate3d(${xPos}px, 0, 0)`}>
     <div class="image">
-      <img src={getImage(image)} alt="" />
+      <img src={getImage(image, IMAGE_SIZES.SMALL)} alt="" />
     </div>
     <div class="info">
       <p class="title">{name}</p>

@@ -33,6 +33,16 @@
     z-index: 20;
   }
 
+  main {
+    display: flex;
+
+    min-height: calc(100vh - var(--size-action-bar));
+
+    :global(> *) {
+      width: 100%;
+    }
+  }
+
   :global(body.locked) {
     overflow: hidden;
   }

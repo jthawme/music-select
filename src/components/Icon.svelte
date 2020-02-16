@@ -15,7 +15,10 @@
     SearchIcon,
     CornerLeftDownIcon,
     LoaderIcon,
-    PlayCircleIcon
+    PlayCircleIcon,
+    CheckIcon,
+    LogOutIcon,
+    XIcon
   } from "svelte-feather-icons";
 
   export let name = "";
@@ -39,7 +42,10 @@
     search: SearchIcon,
     cornerLeftDown: CornerLeftDownIcon,
     loader: LoaderIcon,
-    play: PlayCircleIcon
+    play: PlayCircleIcon,
+    check: CheckIcon,
+    logout: LogOutIcon,
+    x: XIcon
   };
 
   function getIcon() {

@@ -2,10 +2,11 @@ import { writable, get, derived } from "svelte/store";
 
 import { userInfo } from "./auth";
 import { db } from "../utils/firebase";
+import { getUid } from "../utils/database";
 
 export const loading = writable(false);
 export const genres = writable({});
-export const albums = writable([]);
+export const albums = writable({});
 export const sortedAlbums = derived(albums, $albums => {
   const albumList = Object.keys($albums).map(key => $albums[key]);
   albumList.sort((a, b) => {
@@ -20,9 +21,9 @@ export const sortedAlbums = derived(albums, $albums => {
 
   return albumList;
 });
-export const listening = writable([]);
+export const info = writable({ listening: [] });
 
-const dbStores = { genres, albums, listening };
+const dbStores = { genres, albums, info };
 
 const getUserId = () => get(userInfo).id;
 export const getUserRef = () => db.collection(getUserId());
@@ -38,6 +39,11 @@ export function listenTo(key) {
     });
 }
 
-export function isListening(uid) {
-  return get(listening).includes(uid);
+export function ownsAlbum(artist, album) {
+  const uid = getUid(artist, album);
+  return Object.keys(get(albums)).includes(uid);
+}
+
+export function isListening(listening, uid) {
+  return listening.includes(uid);
 }

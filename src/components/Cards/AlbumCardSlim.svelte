@@ -1,4 +1,6 @@
 <script>
+  import LazyImage from "../Common/LazyImage.svelte";
+
   export let image = "";
   export let artist = "";
   export let album = "";
@@ -15,7 +17,10 @@
 
   .image {
     flex-basis: 64px;
+    flex-shrink: 0;
+    height: 64px;
     margin-right: var(--size-unit-2);
+    background-color: var(--color-background-light);
 
     line-height: 0;
 
@@ -42,7 +47,7 @@
 
 <div class="container">
   <div class="image">
-    <img src={image} alt="" />
+    <LazyImage src={image} alt="" />
   </div>
   <div class="info">
     <p>

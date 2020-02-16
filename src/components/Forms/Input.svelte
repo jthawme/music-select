@@ -3,7 +3,7 @@
   export let type = "text";
   export let placeholder = "";
   export let name = "";
-  export let value;
+  export let value = "";
 
   const handleInput = e => {
     // in here, you can switch on type and implement

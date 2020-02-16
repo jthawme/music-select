@@ -15,12 +15,22 @@
   export let size = "normal";
 
   export let disabled = false;
+  export let reverse = false;
+  export let native = false;
 
   function getIconSize() {
     return {
       normal: "18",
       large: "24"
     }[size];
+  }
+
+  function possibleLink(node) {
+    if (native) {
+      return null;
+    }
+
+    return link(node);
   }
 </script>
 
@@ -42,6 +52,10 @@
     cursor: pointer;
   }
 
+  .reverse {
+    flex-direction: row-reverse;
+  }
+
   .primary {
     background-color: var(--color-accent);
     color: white;
@@ -59,6 +73,11 @@
   .icon {
     margin-right: 6px;
     margin-top: 2px;
+  }
+
+  .reverse .icon {
+    margin-left: 6px;
+    margin-right: 0;
   }
 
   .noButtonMargin .icon {
@@ -93,8 +112,9 @@
   <a
     on:click
     href={to}
-    use:link
+    use:possibleLink
     class:noPadding
+    class:reverse
     class:noButtonMargin
     class:weak
     class={`${type} ${size}`}>
@@ -109,6 +129,7 @@
   <button
     on:click
     class:noPadding
+    class:reverse
     class:noButtonMargin
     class:weak
     {disabled}

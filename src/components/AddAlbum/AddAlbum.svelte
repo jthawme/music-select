@@ -2,12 +2,13 @@
   import Fuse from "fuse.js";
   import api from "../../utils/api";
   import database from "../../utils/database";
-  import { loading } from "../../store/data";
+  import { loading, ownsAlbum } from "../../store/data";
 
   import Wrapper from "../Layout/Wrapper.svelte";
   import AddAlbumForm from "./AddAlbumForm.svelte";
   import AlbumCardSlim from "../Cards/AlbumCardSlim.svelte";
   import Button from "../Button.svelte";
+  import Icon from "../Icon.svelte";
 
   let fetchAlbums;
   let artistSearch = "";
@@ -26,21 +27,27 @@
     });
   }
 
+  const options = {
+    shouldSort: true,
+    threshold: 0.6,
+    location: 0,
+    distance: 100,
+    maxPatternLength: 32,
+    minMatchCharLength: 1,
+    keys: ["artist"]
+  };
+  const fuse = new Fuse([], options);
+
   function sortResults(results, artist) {
     if (artist) {
-      const options = {
-        shouldSort: true,
-        threshold: 0.6,
-        location: 0,
-        distance: 100,
-        maxPatternLength: 32,
-        minMatchCharLength: 1,
-        keys: ["artist"]
-      };
-      const fuse = new Fuse(results, options);
-      return fuse.search(artist);
+      fuse.setCollection(results);
+      return fuse.search(artist).map(album => {
+        return { ...album, owns: ownsAlbum(album.artist, album.name) };
+      });
     } else {
-      return results.slice();
+      return results.slice().map(album => {
+        return { ...album, owns: ownsAlbum(album.artist, album.name) };
+      });
     }
   }
 
@@ -57,8 +64,6 @@
 
 <style lang="scss">
   section {
-    min-height: 100vh;
-
     display: flex;
     flex-direction: column;
 
@@ -98,6 +103,7 @@
     justify-content: center;
 
     padding-top: var(--size-unit-2);
+    color: var(--color-accent-dark);
   }
 </style>
 
@@ -120,18 +126,25 @@
             artist={result.artist}
             album={result.name}
             image={result.image[result.image.length - 1]['#text']}>
-            <Button
-              size="small"
-              on:click={() => addAlbumToDatabase(result.mbid, result.artist, result.name)}
-              disabled={$loading}>
-              Add
-            </Button>
+            {#if result.owns}
+              <Icon name="check" />
+            {:else}
+              <Button
+                size="small"
+                on:click={() => addAlbumToDatabase(result.mbid, result.artist, result.name)}
+                disabled={$loading}>
+                Add
+              </Button>
+            {/if}
           </AlbumCardSlim>
         {/each}
 
         {#if results.length > resultsLength}
           <div class="more">
-            <Button on:click={increaseResults} icon="cornerLeftDown">
+            <Button
+              type="tertiary"
+              on:click={increaseResults}
+              icon="cornerLeftDown">
               More results
             </Button>
           </div>

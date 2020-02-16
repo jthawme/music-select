@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "Coplestons";
+  src: local("Coplestons Headline"),
+    url("/fonts/coplestons-headline.woff2") format("woff2");
+}
+
 :root {
   --color-accent: #ff0000;
   --color-accent-weak: #fee7e0;
@@ -9,6 +15,7 @@
   --size-unit-2: 12px;
   --size-unit-3: 18px;
   --size-unit-4: 24px;
+  --size-unit-8: 48px;
   --size-header: 64px;
   --size-action-bar: 64px;
   --size-footer: 66px;
@@ -18,7 +25,8 @@
   --font-size-small: 12px;
   --font-size-normal: 16px;
   --font-size-large: 18px;
-  --font-size-x-large: 36px;
+  --font-size-x-large: 24px;
+  --font-size-xx-large: 36px;
 
   --font-weight-regular: 500;
   --font-weight-bold: 700;

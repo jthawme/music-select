@@ -1,13 +1,17 @@
 <script>
+  import LazyImage from "../Common/LazyImage.svelte";
+  import Modal from "../Common/Modal.svelte";
+  import Row from "../Forms/Row.svelte";
   import Button from "../Button.svelte";
-  import { getImage, IMAGE_SIZES } from "../../utils/database";
+  import Title from "../Layout/Title.svelte";
+  import database, { getImage, IMAGE_SIZES } from "../../utils/database";
 
   const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-  export let lastListened;
-  export let dateAdded;
-  export let id;
-  export let uid;
+  export let lastListened = null;
+  export let dateAdded = null;
+  export let id = null;
+  export let uid = null;
   export let artist = "";
   export let name = "";
   export let image = "";
@@ -45,6 +49,7 @@
   let open = false;
 
   let threshold = 100;
+  let busy = false;
 
   function onMouseMove(e) {
     lastX = e.x;
@@ -81,6 +86,10 @@
   }
 
   function onHandleDown(e) {
+    if (busy) {
+      return false;
+    }
+
     touch = !!e.touches;
 
     if (touch) {
@@ -128,6 +137,42 @@
       window.removeEventListener("touchcancel", onHandleUp);
     }
   }
+
+  let shouldDelete = false;
+
+  function onTrash() {
+    shouldDelete = true;
+  }
+
+  function confirmOnTrash() {
+    busy = true;
+    database.deleteAlbum(artist, name).then(() => (busy = false));
+  }
+
+  function onCloseModal() {
+    shouldDelete = false;
+    open = false;
+  }
+
+  function setListening() {
+    busy = true;
+
+    database.setListening(artist, name).then(() => {
+      busy = false;
+      open = false;
+      isListening = true;
+    });
+  }
+
+  function removeListening() {
+    busy = true;
+
+    database.removeListening(artist, name).then(() => {
+      busy = false;
+      open = false;
+      isListening = false;
+    });
+  }
 </script>
 
 <style lang="scss">
@@ -136,7 +181,11 @@
 
     width: 100%;
 
-    margin: var(--size-unit-2) 0;
+    padding: var(--size-unit-2) 0;
+  }
+
+  .busy {
+    opacity: 0.5;
   }
 
   .container {
@@ -167,12 +216,6 @@
     transform: translate3d(-100px, 0, 0);
   }
 
-  .image {
-    line-height: 0;
-
-    margin-right: var(--size-unit-2);
-  }
-
   .info {
     flex-grow: 1;
     min-width: 0;
@@ -188,9 +231,19 @@
     text-overflow: ellipsis;
   }
 
-  .image img {
-    width: 64px;
-    height: 64px;
+  .image {
+    flex-basis: 64px;
+    flex-shrink: 0;
+    line-height: 0;
+
+    margin-right: var(--size-unit-2);
+
+    background-color: var(--color-accent-weak);
+
+    :global(img) {
+      width: 64px;
+      height: 64px;
+    }
   }
 
   .title {
@@ -229,12 +282,19 @@
       padding: 10px;
     }
   }
+
+  .modal {
+    :global(h3) {
+      color: var(--color-accent);
+    }
+  }
 </style>
 
 <div
   class="outer"
   class:animate={!dragging}
   class:open
+  class:busy
   bind:this={wrapperRef}
   bind:clientWidth={width}>
   <div
@@ -243,7 +303,7 @@
     on:touchstart={onHandleDown}
     style={dragging && `transform: translate3d(${xPos}px, 0, 0)`}>
     <div class="image">
-      <img src={getImage(image, IMAGE_SIZES.SMALL)} alt="" />
+      <LazyImage src={getImage(image, IMAGE_SIZES.SMALL)} alt="" />
     </div>
     <div class="info">
       <p class="title">{name}</p>
@@ -258,21 +318,35 @@
       noButtonMargin
       noPadding
       size="large"
-      type="tertiary" />
+      type="tertiary"
+      on:click={onTrash} />
     {#if isListening}
       <Button
         icon="stop"
         noButtonMargin
         noPadding
         size="large"
-        type="tertiary" />
+        type="tertiary"
+        on:click={removeListening} />
     {:else}
       <Button
         icon="play"
         noButtonMargin
         noPadding
         size="large"
-        type="tertiary" />
+        type="tertiary"
+        on:click={setListening} />
     {/if}
   </div>
 </div>
+
+{#if shouldDelete}
+  <Modal on:close={onCloseModal}>
+    <span class="modal">
+      <Title el="h3" size="medium">Really?</Title>
+      <Row>
+        <Button on:click={confirmOnTrash} icon="trash">Yes, I'm sure</Button>
+      </Row>
+    </span>
+  </Modal>
+{/if}

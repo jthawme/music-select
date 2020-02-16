@@ -5,10 +5,6 @@
   import Wrapper from "../components/Layout/Wrapper.svelte";
 
   let filterValue = "";
-
-  $: {
-    console.log(filterValue);
-  }
 </script>
 
 <style lang="scss">
@@ -40,5 +36,5 @@
       </Label>
     </Wrapper>
   </div>
-  <Discography />
+  <Discography filter={filterValue} />
 </div>

@@ -25,7 +25,7 @@
   }
 
   .title {
-    font-size: var(--font-size-x-large);
+    font-size: var(--font-size-xx-large);
 
     color: var(--color-accent);
     margin: var(--size-unit-4) 0 var(--size-unit-1);

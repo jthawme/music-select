@@ -5,8 +5,6 @@
 
 <style lang="scss">
   footer {
-    padding-bottom: var(--size-action-bar);
-
     background-color: var(--color-background-light);
   }
 

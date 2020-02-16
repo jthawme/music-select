@@ -17,7 +17,8 @@ firebase.auth().onAuthStateChanged(
     if (user) {
       userInfo.set({
         id: user.uid,
-        name: user.displayName
+        name: user.displayName,
+        image: user.photoURL
       });
 
       if (!get(hydratedData)) {
@@ -27,7 +28,7 @@ firebase.auth().onAuthStateChanged(
           hydratedData.set(true);
           listenTo("albums");
           listenTo("genres");
-          listenTo("listening");
+          listenTo("info");
         });
       }
     } else {

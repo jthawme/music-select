@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
 import api from "./api";
-import { db } from "./firebase";
+import firebase, { db } from "./firebase";
 import { isLoggedIn } from "../store/auth";
-import { genres, listening, getUserRef, loading } from "../store/data";
+import { genres, info, albums, getUserRef, loading } from "../store/data";
 import { TOP_TAGS } from "../store/constants";
 
 const prepareTag = tag => {
@@ -88,26 +88,24 @@ const database = {
     checkedLoggedIn();
 
     const uid = getUid(artist, album);
-    const currentListening = get(listening);
+    const currentListening = get(info).listening;
 
     if (!currentListening.includes(uid)) {
       const batch = db.batch();
 
       currentListening.push(uid);
 
-      batch.update(getUserRef().doc("listening"), {
-        listening: currentListening
-      });
-
-      batch.update(
-        getUserRef()
-          .doc("albums")
-          .collection("list")
-          .doc(uid),
+      batch.set(
+        getUserRef().doc("info"),
         {
-          lastListened: new Date()
-        }
+          listening: currentListening
+        },
+        { merge: true }
       );
+
+      batch.update(getUserRef().doc("albums"), {
+        [`${uid}.lastListened`]: new Date()
+      });
 
       return batch.commit();
     }
@@ -117,30 +115,39 @@ const database = {
   removeListening: (artist, album) => {
     checkedLoggedIn();
 
-    return new Promise((resolve, reject) => {
-      const currentListening = get(listening);
-      const uid = getUid(artist, album);
-      const uidIndex = currentListening.indexOf(uid);
-      currentListening.splice(uidIndex, 1);
+    const currentListening = get(info).listening;
+    const uid = getUid(artist, album);
+    const uidIndex = currentListening.indexOf(uid);
+    currentListening.splice(uidIndex, 1);
 
-      return getUserRef()
-        .doc("listening")
-        .update({
-          listening: currentListening
-        });
-    });
+    return getUserRef()
+      .doc("info")
+      .update({
+        listening: currentListening
+      });
+  },
+  deleteAlbum: (artist, album) => {
+    const uid = getUid(artist, album);
+
+    return getUserRef()
+      .doc("albums")
+      .update({
+        [uid]: firebase.firestore.FieldValue.delete()
+      });
   },
   getFromIds: ids => {
     checkedLoggedIn();
 
-    return getUserRef()
-      .doc("albums")
-      .collection("list")
-      .where("uid", "in", ids)
-      .get()
-      .then(snapshot => {
-        return snapshot.docs.map(doc => doc.data());
-      });
+    const albums = get(albums);
+    const arr = [];
+
+    Object.keys(albums).forEach(key => {
+      if (ids.includes(key)) {
+        arr.push(albums[key]);
+      }
+    });
+
+    return arr;
   }
 };
 

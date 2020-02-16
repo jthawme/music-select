@@ -1,6 +1,6 @@
 <script>
   import { userInfo } from "../../store/auth";
-  import Icon from "../Icon.svelte";
+  import Icon from "../Common/Icon.svelte";
   import UserMenu from "../Auth/UserMenu.svelte";
 </script>
 

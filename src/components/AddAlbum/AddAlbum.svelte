@@ -7,8 +7,8 @@
   import Wrapper from "../Layout/Wrapper.svelte";
   import AddAlbumForm from "./AddAlbumForm.svelte";
   import AlbumCardSlim from "../Cards/AlbumCardSlim.svelte";
-  import Button from "../Button.svelte";
-  import Icon from "../Icon.svelte";
+  import Button from "../Common/Button.svelte";
+  import Icon from "../Common/Icon.svelte";
 
   let fetchAlbums;
   let artistSearch = "";

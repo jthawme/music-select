@@ -3,7 +3,7 @@
   import { quintOut } from "svelte/easing";
 
   import LazyImage from "../Common/LazyImage.svelte";
-  import Button from "../Button.svelte";
+  import Button from "../Common/Button.svelte";
 
   export let id;
   export let name;
@@ -16,8 +16,6 @@
       showMenu = force;
       return;
     }
-
-    console.log(showMenu);
 
     showMenu = !showMenu;
   }

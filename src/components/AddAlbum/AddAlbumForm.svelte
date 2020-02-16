@@ -3,7 +3,7 @@
   import Row from "../Forms/Row.svelte";
   import Label from "../Forms/Label.svelte";
   import Input from "../Forms/Input.svelte";
-  import Button from "../Button.svelte";
+  import Button from "../Common/Button.svelte";
 </script>
 
 <style lang="scss">

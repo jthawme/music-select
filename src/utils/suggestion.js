@@ -1,6 +1,8 @@
 import { get } from "svelte/store";
-import { db } from "./firebase";
-import { getUserRef, albums, info, isListening } from "../store/data";
+// import { db } from "./firebase";
+import { sortedAlbums } from "../store/data";
+import { randomValue } from "./utils";
+// import { getUserRef } from "./constants";
 
 export const SUGGESTION_TYPES = {
   RANDOM: "RANDOM",
@@ -8,19 +10,12 @@ export const SUGGESTION_TYPES = {
   LISTENED: "LISTENED"
 };
 
-let localListening = [];
-info.subscribe(value => (localListening = value.listening));
-
-function randomValue(arr) {
-  return arr[Math.floor(arr.length * Math.random())];
-}
-
 function getRandomType() {
   return randomValue(Object.values(SUGGESTION_TYPES));
 }
 
 function notListeningAlbums() {
-  return get(albums).filter(album => !isListening(localListening, album.uid));
+  return get(sortedAlbums).filter(album => !album.isListening);
 }
 
 function getAlbum(type) {
@@ -41,8 +36,12 @@ function getAlbum(type) {
   }
 }
 
-export function getSuggestion(suggestionType) {
-  const type = Object.values(SUGGESTION_TYPES).indexOf(suggestionType)
+function validType(type) {
+  return Object.values(SUGGESTION_TYPES).indexOf(type);
+}
+
+export function getSuggestion(suggestionOptions) {
+  const type = validType(suggestionOptions.type)
     ? suggestionType
     : getRandomType();
 

@@ -1,15 +1,7 @@
 <script>
   import { link } from "svelte-routing";
-  import { HomeIcon } from "svelte-feather-icons";
-  import SearchForm from "../SearchForm.svelte";
-  import Icon from "../Icon.svelte";
-  import Button from "../Button.svelte";
-
-  let search = false;
-
-  function toggleSearch() {
-    search = !search;
-  }
+  import Icon from "../Common/Icon.svelte";
+  import Button from "../Common/Button.svelte";
 </script>
 
 <style lang="scss">

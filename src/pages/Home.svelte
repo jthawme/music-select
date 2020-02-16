@@ -6,7 +6,7 @@
 
   import Suggestion from "../components/Suggestion.svelte";
   import ListeningList from "../components/ListeningList.svelte";
-  import Button from "../components/Button.svelte";
+  import Button from "../components/Common/Button.svelte";
 
   let wantsNext = false;
   let suggestion = null;

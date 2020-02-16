@@ -2,7 +2,7 @@
   import VirtualList from "@sveltejs/svelte-virtual-list";
   import Fuse from "fuse.js";
 
-  import { sortedAlbums, isListening, info } from "../store/data";
+  import { sortedAlbums, isListening, listening } from "../store/data";
 
   import AlbumCard from "./Cards/AlbumCard.svelte";
   import Wrapper from "./Layout/Wrapper.svelte";
@@ -34,20 +34,10 @@
 
   $: {
     if (!filter.trim()) {
-      albums = $sortedAlbums.map(album => {
-        return {
-          ...album,
-          isListening: isListening($info.listening, album.uid)
-        };
-      });
+      albums = $sortedAlbums;
     } else {
       fuse.setCollection($sortedAlbums);
-      albums = [...fuse.search(filter)].map(album => {
-        return {
-          ...album,
-          isListening: isListening($info.listening, album.uid)
-        };
-      });
+      albums = [...fuse.search(filter)];
     }
   }
 </script>

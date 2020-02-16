@@ -1,29 +1,20 @@
 import { get } from "svelte/store";
+
 import api from "./api";
 import { db } from "./firebase";
+import { prepareTag } from "./utils";
+
 import { isLoggedIn } from "../store/auth";
-import { genres, info, albums, getUserRef, loading } from "../store/data";
-import { TOP_TAGS } from "../store/constants";
+import { genres, listening, loading } from "../store/data";
 
-const prepareTag = tag => {
-  return tag
-    .toLowerCase()
-    .split("-")
-    .join(" ");
-};
-
-export const getUid = (artist, album) => {
-  return btoa(`${artist}!@!${album}`);
-};
-
-export const IMAGE_SIZES = {
-  SMALL: "174s",
-  NORMAL: "300x300"
-};
-
-export const getImage = (image, size = IMAGE_SIZES.NORMAL) => {
-  return `https://lastfm.freetls.fastly.net/i/u/${size}/${image}`;
-};
+import {
+  getUserRef,
+  getUid,
+  getAlbumsCollection,
+  getGenresDocument,
+  getInfoDocument
+} from "./utils";
+import { TOP_TAGS } from "./constants";
 
 const checkedLoggedIn = () => {
   if (!get(isLoggedIn)) {
@@ -53,7 +44,7 @@ const database = {
           }
 
           batch.set(
-            getUserRef().doc("genres"),
+            getGenresDocument(),
             {
               [tagName]: currentGenres[tagName]
             },
@@ -63,10 +54,7 @@ const database = {
       });
 
       batch.set(
-        getUserRef()
-          .doc("albums")
-          .collection("list")
-          .doc(uid),
+        getAlbumsCollection().doc(uid),
         {
           uid: uid,
           id: mbid,
@@ -85,11 +73,19 @@ const database = {
       });
     });
   },
+
+  /**
+   * Adds album to listening and stores
+   * time listened
+   *
+   * @param {string} artist
+   * @param {string} album
+   */
   setListening: (artist, album) => {
     checkedLoggedIn();
 
     const uid = getUid(artist, album);
-    const currentListening = get(info).listening;
+    const currentListening = get(listening);
 
     if (!currentListening.includes(uid)) {
       const batch = db.batch();
@@ -97,51 +93,60 @@ const database = {
       currentListening.push(uid);
 
       batch.set(
-        getUserRef().doc("info"),
+        getInfoDocument(),
         {
           listening: currentListening
         },
         { merge: true }
       );
 
-      batch.update(
-        getUserRef()
-          .doc("albums")
-          .collection("list")
-          .doc(uid),
-        {
-          lastListened: new Date()
-        }
-      );
+      batch.update(getAlbumsCollection().doc(uid), {
+        lastListened: new Date()
+      });
 
       return batch.commit();
     }
 
     return Promise.reject("Not listening");
   },
+
+  /**
+   * Removes album from listening
+   *
+   * @param {string} artist
+   * @param {string} album
+   */
   removeListening: (artist, album) => {
     checkedLoggedIn();
 
-    const currentListening = get(info).listening;
+    const currentListening = get(listening);
     const uid = getUid(artist, album);
     const uidIndex = currentListening.indexOf(uid);
     currentListening.splice(uidIndex, 1);
 
-    return getUserRef()
-      .doc("info")
-      .update({
+    return getInfoDocument().set(
+      {
         listening: currentListening
-      });
+      },
+      { merge: true }
+    );
   },
+
+  /**
+   * Adds album to listening and stores
+   * time listened
+   *
+   * @param {string} artist
+   * @param {string} album
+   */
   deleteAlbum: (artist, album) => {
     const uid = getUid(artist, album);
 
-    return getUserRef()
-      .doc("albums")
-      .collection("list")
+    return getAlbumsCollection()
       .doc(uid)
       .delete();
   },
+
   getFromIds: ids => {
     checkedLoggedIn();
 
@@ -149,9 +154,7 @@ const database = {
       return Promise.resolve([]);
     }
 
-    return getUserRef()
-      .doc("albums")
-      .collection("list")
+    return getAlbumsCollection()
       .where("uid", "in", ids)
       .get()
       .then(query => {

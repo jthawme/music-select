@@ -1,4 +1,4 @@
-import { TOKEN_KEY } from "../store/auth";
+import { TOKEN_KEY } from "../utils/constants";
 const ENDPOINT_PREFIX = "/.netlify/functions";
 
 const getToken = () => {

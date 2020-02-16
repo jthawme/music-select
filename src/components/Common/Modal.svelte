@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher, onDestroy } from "svelte";
   import Portal from "svelte-portal";
-  import Icon from "../Icon.svelte";
+  import Icon from "../Common/Icon.svelte";
 
   const dispatch = createEventDispatcher();
   const close = () => dispatch("close");

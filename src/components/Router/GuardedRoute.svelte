@@ -8,8 +8,6 @@
   export let component = null;
   export let shouldBeLoggedOut = false;
   export let redirect = "";
-
-  $: loginState = $hasResolvedLogin && $isLoggedIn;
 </script>
 
 <Route {path}>

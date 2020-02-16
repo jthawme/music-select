@@ -5,7 +5,6 @@
   import firebase from "../../utils/firebase";
 
   const authUiConfig = {
-    signInSuccessUrl: "/",
     signInOptions: [
       firebase.auth.EmailAuthProvider.PROVIDER_ID,
       firebase.auth.TwitterAuthProvider.PROVIDER_ID,

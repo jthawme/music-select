@@ -1,7 +1,10 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import Button from "../components/Button.svelte";
-  import database, { getImage, IMAGE_SIZES } from "../utils/database";
+  import database from "../utils/database";
+  import { getImage } from "../utils/utils";
+  import { IMAGE_SIZES } from "../utils/constants";
+
+  import Button from "../components/Common/Button.svelte";
 
   export let name = "";
   export let artist = "";

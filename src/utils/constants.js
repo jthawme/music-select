@@ -53,3 +53,10 @@ export const TOP_TAGS = [
   "pop punk",
   "grunge"
 ];
+
+export const IMAGE_SIZES = {
+  SMALL: "174s",
+  NORMAL: "300x300"
+};
+
+export const TOKEN_KEY = "music-select-token";

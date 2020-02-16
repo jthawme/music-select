@@ -1,10 +1,14 @@
 <script>
+  import database from "../../utils/database";
+  import { getImage } from "../../utils/utils";
+  import { IMAGE_SIZES } from "../../utils/constants";
+
   import LazyImage from "../Common/LazyImage.svelte";
   import Modal from "../Common/Modal.svelte";
+  import Button from "../Common/Button.svelte";
+  import Icon from "../Common/Icon.svelte";
   import Row from "../Forms/Row.svelte";
-  import Button from "../Button.svelte";
   import Title from "../Layout/Title.svelte";
-  import database, { getImage, IMAGE_SIZES } from "../../utils/database";
 
   const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
@@ -238,6 +242,8 @@
   }
 
   .image {
+    position: relative;
+
     flex-basis: 64px;
     flex-shrink: 0;
     line-height: 0;
@@ -258,6 +264,13 @@
 
   .artist {
     font-size: var(--font-size-x-small);
+  }
+
+  .status {
+    position: absolute;
+
+    top: var(--size-unit-2);
+    right: var(--size-unit-2);
   }
 
   .cta {
@@ -312,6 +325,11 @@
     style={dragging && `transform: translate3d(${xPos}px, 0, 0)`}>
     <div class="image">
       <LazyImage src={getImage(image, IMAGE_SIZES.SMALL)} alt="" />
+      {#if isListening}
+        <div class="status">
+          <Icon name="music" />
+        </div>
+      {/if}
     </div>
     <div class="info">
       <p class="title">{name}</p>

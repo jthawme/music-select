@@ -6,3 +6,7 @@
   command="yarn dev"
   port=5000
   publish="public"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

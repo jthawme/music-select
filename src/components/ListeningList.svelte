@@ -1,22 +1,16 @@
 <script>
   import database from "../utils/database";
-  import { info } from "../store/data";
+  import { albums, info, isListening } from "../store/data";
   import Title from "./Title.svelte";
   import AlbumCard from "./Cards/AlbumCard.svelte";
+
+  function filterAlbums(results, listening) {
+    return results.filter(album => isListening(listening, album.uid));
+  }
 </script>
 
-<style lang="scss">
-  section {
-    padding: var(--size-unit-4);
+<Title icon="disc">Listening</Title>
 
-    background-color: var(--color-background-light);
-  }
-</style>
-
-<section>
-  <Title icon="disc">Listening</Title>
-
-  {#each database.getFromIds($info.listening) as item}
-    <AlbumCard {...item} />
-  {/each}
-</section>
+{#each filterAlbums($albums, $info.listening) as item (item.uid)}
+  <AlbumCard {...item} isListening />
+{/each}

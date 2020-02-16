@@ -1,5 +1,19 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import Button from "../components/Button.svelte";
+  import database, { getImage, IMAGE_SIZES } from "../utils/database";
+
+  export let name = "";
+  export let artist = "";
+  export let image = "";
+
+  const dispatch = createEventDispatcher();
+
+  function setListening() {
+    database.setListening(artist, name).then(() => {
+      dispatch("added");
+    });
+  }
 </script>
 
 <style lang="scss">
@@ -9,9 +23,7 @@
     flex-direction: column;
     align-items: center;
 
-    padding: var(--size-header) var(--size-unit-4) var(--size-unit-4);
-
-    background-color: var(--color-accent-weak);
+    text-align: center;
   }
 
   p {
@@ -33,33 +45,42 @@
     font-weight: var(--font-weight-regular);
   }
 
+  .image {
+    width: 300px;
+    height: 300px;
+
+    line-height: 0;
+  }
+
   img {
-    max-width: 300px;
-    width: 65%;
+    width: 100%;
   }
 
   .actions {
     display: flex;
 
-    flex-direction: column;
+    flex-direction: row;
 
     margin-top: var(--size-unit-2);
 
     :global(button) {
-      margin-bottom: var(--size-unit-2);
+      margin: 0 var(--size-unit-1);
     }
   }
 </style>
 
 <section>
   <p class="small">Why not listen to:</p>
-  <img src="https://f4.bcbits.com/img/a3643784525_10.jpg" alt="" />
-  <p class="title">Marigold</p>
-  <p class="small">Pinegrove</p>
+  <div class="image">
+    <img src={getImage(image, IMAGE_SIZES.NORMAL)} alt="" />
+  </div>
+  <p class="title">{name}</p>
+  <p class="small">{artist}</p>
 
   <div class="actions">
-    <Button icon="headphones">Add to listening</Button>
-    <Button icon="refresh" weak>Next recommendation</Button>
-    <Button icon="zap" type="tertiary">Advanced</Button>
+    <Button icon="check" type="secondary" on:click={() => setListening()}>
+      Okay
+    </Button>
+    <Button icon="x" weak on:click={() => dispatch('next')}>Next</Button>
   </div>
 </section>

@@ -65,6 +65,11 @@
     background-color: var(--color-accent-dark);
   }
 
+  .secondary {
+    background-color: var(--color-success);
+    color: white;
+  }
+
   .tertiary {
     background-color: transparent;
     color: inherit;

@@ -4,6 +4,7 @@
   export let placeholder = "";
   export let name = "";
   export let value = "";
+  export let autofocus = false;
 
   const handleInput = e => {
     // in here, you can switch on type and implement
@@ -26,4 +27,4 @@
   }
 </style>
 
-<input {type} {name} {placeholder} on:input={handleInput} />
+<input {type} {name} {placeholder} {autofocus} on:input={handleInput} />

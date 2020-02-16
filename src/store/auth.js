@@ -1,6 +1,6 @@
 import { writable, get } from "svelte/store";
 import firebase from "../utils/firebase";
-import { listenTo } from "./data";
+import { listenTo, albums } from "./data";
 
 export const hasResolvedLogin = writable(false);
 export const isLoggedIn = writable(false);
@@ -26,7 +26,9 @@ firebase.auth().onAuthStateChanged(
           user.getIdToken().then(accessToken => userToken.set(accessToken))
         ]).then(() => {
           hydratedData.set(true);
-          listenTo("albums");
+          listenTo(["albums", "list"], query => {
+            albums.set(query.docs.map(doc => doc.data()));
+          });
           listenTo("genres");
           listenTo("info");
         });

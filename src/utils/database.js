@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import api from "./api";
-import firebase, { db } from "./firebase";
+import { db } from "./firebase";
 import { isLoggedIn } from "../store/auth";
 import { genres, info, albums, getUserRef, loading } from "../store/data";
 import { TOP_TAGS } from "../store/constants";
@@ -63,17 +63,18 @@ const database = {
       });
 
       batch.set(
-        getUserRef().doc("albums"),
+        getUserRef()
+          .doc("albums")
+          .collection("list")
+          .doc(uid),
         {
-          [uid]: {
-            uid: uid,
-            id: mbid,
-            name: albumInfo.name,
-            artist: albumInfo.artist,
-            image: albumInfo.image[0]["#text"].split("/").pop(),
-            lastListened: null,
-            dateAdded: new Date()
-          }
+          uid: uid,
+          id: mbid,
+          name: albumInfo.name,
+          artist: albumInfo.artist,
+          image: albumInfo.image[0]["#text"].split("/").pop(),
+          lastListened: null,
+          dateAdded: new Date()
         },
         { merge: true }
       );
@@ -103,9 +104,15 @@ const database = {
         { merge: true }
       );
 
-      batch.update(getUserRef().doc("albums"), {
-        [`${uid}.lastListened`]: new Date()
-      });
+      batch.update(
+        getUserRef()
+          .doc("albums")
+          .collection("list")
+          .doc(uid),
+        {
+          lastListened: new Date()
+        }
+      );
 
       return batch.commit();
     }
@@ -131,23 +138,25 @@ const database = {
 
     return getUserRef()
       .doc("albums")
-      .update({
-        [uid]: firebase.firestore.FieldValue.delete()
-      });
+      .collection("list")
+      .doc(uid)
+      .delete();
   },
   getFromIds: ids => {
     checkedLoggedIn();
 
-    const albums = get(albums);
-    const arr = [];
+    if (ids.length === 0) {
+      return Promise.resolve([]);
+    }
 
-    Object.keys(albums).forEach(key => {
-      if (ids.includes(key)) {
-        arr.push(albums[key]);
-      }
-    });
-
-    return arr;
+    return getUserRef()
+      .doc("albums")
+      .collection("list")
+      .where("uid", "in", ids)
+      .get()
+      .then(query => {
+        return query.docs.map(doc => doc.data());
+      });
   }
 };
 

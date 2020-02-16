@@ -9,8 +9,6 @@
 
   import Home from "./Home.svelte";
   import Library from "./Library.svelte";
-
-  let activeRoute = null;
 </script>
 
 <style lang="scss">
@@ -52,7 +50,7 @@
   }
 </style>
 
-<LocationListen bind:activeRoute />
+<LocationListen />
 
 <header>
   <Header />

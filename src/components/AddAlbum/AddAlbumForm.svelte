@@ -17,7 +17,7 @@
   <Title icon="disc">Add Album</Title>
   <Row>
     <Label title="Album">
-      <Input type="search" name="album" />
+      <Input autofocus type="search" name="album" />
     </Label>
   </Row>
   <Row>

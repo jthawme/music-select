@@ -146,7 +146,12 @@
 
   function confirmOnTrash() {
     busy = true;
-    database.deleteAlbum(artist, name).then(() => (busy = false));
+
+    const stopListening = isListening ? removeListening() : Promise.resolve();
+
+    stopListening.then(() => {
+      database.deleteAlbum(artist, name).then(() => (busy = false));
+    });
   }
 
   function onCloseModal() {
@@ -167,10 +172,11 @@
   function removeListening() {
     busy = true;
 
-    database.removeListening(artist, name).then(() => {
+    return database.removeListening(artist, name).then(() => {
       busy = false;
       open = false;
       isListening = false;
+      return true;
     });
   }
 </script>
@@ -257,6 +263,8 @@
   .cta {
     width: 64px;
     height: 20px;
+
+    flex-shrink: 0;
 
     background-size: contain;
     background-repeat: no-repeat;

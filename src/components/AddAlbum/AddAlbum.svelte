@@ -2,7 +2,7 @@
   import Fuse from "fuse.js";
   import api from "../../utils/api";
   import database from "../../utils/database";
-  import { loading, ownsAlbum } from "../../store/data";
+  import { albums, loading, ownsAlbum } from "../../store/data";
 
   import Wrapper from "../Layout/Wrapper.svelte";
   import AddAlbumForm from "./AddAlbumForm.svelte";
@@ -41,13 +41,9 @@
   function sortResults(results, artist) {
     if (artist) {
       fuse.setCollection(results);
-      return fuse.search(artist).map(album => {
-        return { ...album, owns: ownsAlbum(album.artist, album.name) };
-      });
+      return fuse.search(artist);
     } else {
-      return results.slice().map(album => {
-        return { ...album, owns: ownsAlbum(album.artist, album.name) };
-      });
+      return results.slice();
     }
   }
 
@@ -59,6 +55,12 @@
     if (!$loading) {
       database.addAlbum(mbid, artist, name);
     }
+  }
+
+  function convertAlbums(albumResults, albumList) {
+    return albumResults.map(album => {
+      return { ...album, owns: ownsAlbum(album.artist, album.name) };
+    });
   }
 </script>
 
@@ -121,7 +123,7 @@
           <p>No results</p>
         {/if}
 
-        {#each results.slice(0, resultsLength) as result}
+        {#each convertAlbums(results.slice(0, resultsLength), $albums) as result}
           <AlbumCardSlim
             artist={result.artist}
             album={result.name}

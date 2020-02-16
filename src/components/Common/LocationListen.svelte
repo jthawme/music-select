@@ -1,14 +1,18 @@
+<script context="module">
+  import { writable } from "svelte/store";
+
+  export const activeRoute = writable(null);
+</script>
+
 <script>
   import { onMount } from "svelte";
   import { globalHistory } from "svelte-routing/src/history";
 
-  export let activeRoute = null;
-
   onMount(() => {
-    activeRoute = globalHistory.location.pathname;
+    activeRoute.set(globalHistory.location.pathname);
 
     globalHistory.listen(history => {
-      activeRoute = history.location.pathname;
+      activeRoute.set(history.location.pathname);
     });
   });
 </script>

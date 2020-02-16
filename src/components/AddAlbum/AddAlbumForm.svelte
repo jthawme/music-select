@@ -1,4 +1,9 @@
 <script>
+  import {
+    SPOTIFY_CLIENT_ID,
+    SPOTIFY_IMPORT_STATE
+  } from "../../utils/constants";
+  import { getSpotifyUrl } from "../../utils/utils";
   import Title from "../Layout/Title.svelte";
   import Row from "../Forms/Row.svelte";
   import Label from "../Forms/Label.svelte";
@@ -10,6 +15,22 @@
   form {
     padding-top: var(--size-unit-4);
     padding-bottom: var(--size-unit-4);
+  }
+
+  .line {
+    display: flex;
+
+    align-items: center;
+
+    p {
+      padding-left: var(--size-unit-2);
+      font-size: var(--font-size-small);
+
+      a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+    }
   }
 </style>
 
@@ -26,6 +47,12 @@
     </Label>
   </Row>
   <Row>
-    <Button buttonType="submit" icon="search">Search</Button>
+    <div class="line">
+      <Button buttonType="submit" icon="search">Search</Button>
+      <p>
+        or
+        <a href={getSpotifyUrl()}>import from spotify</a>
+      </p>
+    </div>
   </Row>
 </form>

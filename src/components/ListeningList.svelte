@@ -10,9 +10,13 @@
 
   let sorted = [];
   $: sorted = filterAlbums($sortedAlbums);
-
-  $: console.log("sorted", sorted);
 </script>
+
+<style lang="scss">
+  p {
+    margin-top: var(--size-unit-2);
+  }
+</style>
 
 <Title icon="disc">Listening</Title>
 
@@ -20,4 +24,6 @@
   <AlbumCard {...item} isListening />
 {/each}
 
-{#if sorted.length === 0}Not listening to any albums{/if}
+{#if sorted.length === 0}
+  <p>Not listening to any albums</p>
+{/if}

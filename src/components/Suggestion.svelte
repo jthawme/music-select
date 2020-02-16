@@ -9,6 +9,7 @@
   export let name = "";
   export let artist = "";
   export let image = "";
+  export let provider = "";
 
   const dispatch = createEventDispatcher();
 
@@ -75,7 +76,7 @@
 <section>
   <p class="small">Why not listen to:</p>
   <div class="image">
-    <img src={getImage(image, IMAGE_SIZES.NORMAL)} alt="" />
+    <img src={getImage(image, { size: IMAGE_SIZES.NORMAL, provider })} alt="" />
   </div>
   <p class="title">{name}</p>
   <p class="small">{artist}</p>

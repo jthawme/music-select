@@ -9,6 +9,7 @@
 
   import Home from "./Home.svelte";
   import Library from "./Library.svelte";
+  import Import from "./Import.svelte";
 </script>
 
 <style lang="scss">
@@ -64,6 +65,7 @@
   <Router>
     <Route path="/add" component={AddAlbum} />
     <Route path="/library" component={Library} />
+    <Route path="/import" component={Import} />
     <Route path="/" component={Home} />
   </Router>
 </main>

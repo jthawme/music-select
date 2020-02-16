@@ -59,4 +59,11 @@ export const IMAGE_SIZES = {
   NORMAL: "300x300"
 };
 
+export const PROVIDER_TYPES = {
+  LAST_FM: "LAST_FM",
+  SPOTIFY: "SPOTIFY"
+};
+
 export const TOKEN_KEY = "music-select-token";
+export const SPOTIFY_CLIENT_ID = "50381523398f49749da61d967329ae04";
+export const SPOTIFY_IMPORT_STATE = "music-select-spotify-import";

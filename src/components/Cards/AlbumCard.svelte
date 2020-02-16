@@ -20,6 +20,7 @@
   export let name = "";
   export let image = "";
   export let isListening = false;
+  export let provider = "";
 
   const MAX_HANDLE = 1;
   const MIN_HANDLE = 0;
@@ -269,8 +270,16 @@
   .status {
     position: absolute;
 
-    top: var(--size-unit-2);
-    right: var(--size-unit-2);
+    top: var(--size-unit-1);
+    left: 0;
+
+    padding: 2px 2px 1px 2px;
+    border-radius: 0 4px 4px 0;
+
+    background-color: var(--color-accent);
+    color: white;
+
+    line-height: 0;
   }
 
   .cta {
@@ -305,6 +314,12 @@
   }
 
   .modal {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
     :global(h3) {
       color: var(--color-accent);
     }
@@ -324,10 +339,12 @@
     on:touchstart={onHandleDown}
     style={dragging && `transform: translate3d(${xPos}px, 0, 0)`}>
     <div class="image">
-      <LazyImage src={getImage(image, IMAGE_SIZES.SMALL)} alt="" />
+      <LazyImage
+        src={getImage(image, { provider, size: IMAGE_SIZES.SMALL })}
+        alt="" />
       {#if isListening}
         <div class="status">
-          <Icon name="music" />
+          <Icon size="12" name="music" />
         </div>
       {/if}
     </div>

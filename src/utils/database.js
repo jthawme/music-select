@@ -5,22 +5,65 @@ import { db } from "./firebase";
 import { prepareTag } from "./utils";
 
 import { isLoggedIn } from "../store/auth";
-import { genres, listening, loading } from "../store/data";
+import { genres, listening, loading, albums } from "../store/data";
 
 import {
-  getUserRef,
   getUid,
   getAlbumsCollection,
   getGenresDocument,
   getInfoDocument
 } from "./utils";
-import { TOP_TAGS } from "./constants";
+import { TOP_TAGS, PROVIDER_TYPES } from "./constants";
 
 const checkedLoggedIn = () => {
   if (!get(isLoggedIn)) {
     throw new Error("Not logged in");
   }
 };
+
+export function addAlbum(batch, id, provider, artist, album, image, tags) {
+  const uid = getUid(artist, album);
+
+  if (get(albums).find(album => album.uid === uid)) {
+    return;
+  }
+
+  const currentGenres = get(genres);
+  tags.forEach(tag => {
+    if (TOP_TAGS.includes(tag)) {
+      if (!currentGenres[tag]) {
+        currentGenres[tag] = [];
+      }
+
+      if (!currentGenres[tag].includes(uid)) {
+        currentGenres[tag].push(uid);
+      }
+
+      batch.set(
+        getGenresDocument(),
+        {
+          [tag]: currentGenres[tag]
+        },
+        { merge: true }
+      );
+    }
+  });
+
+  batch.set(
+    getAlbumsCollection().doc(uid),
+    {
+      uid: uid,
+      id,
+      provider,
+      name: album,
+      artist,
+      image,
+      lastListened: null,
+      dateAdded: new Date()
+    },
+    { merge: true }
+  );
+}
 
 const database = {
   addAlbum: (mbid, artist, album) => {
@@ -29,42 +72,14 @@ const database = {
     return api.info(mbid, artist, album).then(albumInfo => {
       const batch = db.batch();
 
-      const uid = getUid(artist, album);
-      const currentGenres = get(genres);
-      albumInfo.tags.tag.forEach(tag => {
-        let tagName = prepareTag(tag.name);
-
-        if (TOP_TAGS.includes(tagName)) {
-          if (!currentGenres[tagName]) {
-            currentGenres[tagName] = [];
-          }
-
-          if (!currentGenres[tagName].includes(uid)) {
-            currentGenres[tagName].push(uid);
-          }
-
-          batch.set(
-            getGenresDocument(),
-            {
-              [tagName]: currentGenres[tagName]
-            },
-            { merge: true }
-          );
-        }
-      });
-
-      batch.set(
-        getAlbumsCollection().doc(uid),
-        {
-          uid: uid,
-          id: mbid,
-          name: albumInfo.name,
-          artist: albumInfo.artist,
-          image: albumInfo.image[0]["#text"].split("/").pop(),
-          lastListened: null,
-          dateAdded: new Date()
-        },
-        { merge: true }
+      addAlbum(
+        batch,
+        mbid,
+        PROVIDER_TYPES.LAST_FM,
+        albumInfo.artist,
+        albumInfo.name,
+        albumInfo.image[0]["#text"].split("/").pop(),
+        albumInfo.tags.tag.map(tag => prepareTag(tag.name))
       );
 
       return batch.commit().then(() => {

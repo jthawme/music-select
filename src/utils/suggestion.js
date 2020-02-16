@@ -40,9 +40,9 @@ function validType(type) {
   return Object.values(SUGGESTION_TYPES).indexOf(type);
 }
 
-export function getSuggestion(suggestionOptions) {
+export function getSuggestion(suggestionOptions = {}) {
   const type = validType(suggestionOptions.type)
-    ? suggestionType
+    ? suggestionOptions.type
     : getRandomType();
 
   return getAlbum(type).then(album => {

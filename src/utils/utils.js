@@ -1,7 +1,12 @@
 import { get } from "svelte/store";
 import { userInfo } from "../store/auth";
 import { db } from "./firebase";
-import { IMAGE_SIZES } from "./constants";
+import {
+  IMAGE_SIZES,
+  SPOTIFY_IMPORT_STATE,
+  SPOTIFY_CLIENT_ID,
+  PROVIDER_TYPES
+} from "./constants";
 
 /**
  * Way to unify tags
@@ -22,7 +27,7 @@ export const prepareTag = tag => {
  * @param {string} album
  */
 export const getUid = (artist, album) => {
-  return btoa(`${artist}!@!${album}`);
+  return btoa(`${artist}!@!${album}`.toLowerCase());
 };
 
 /**
@@ -31,8 +36,17 @@ export const getUid = (artist, album) => {
  * @param {string} image 123456.png
  * @param {IMAGE_SIZES} size
  */
-export const getImage = (image, size = IMAGE_SIZES.NORMAL) => {
-  return `https://lastfm.freetls.fastly.net/i/u/${size}/${image}`;
+export const getImage = (
+  image,
+  { provider = PROVIDER_TYPES.LAST_FM, size = IMAGE_SIZES.NORMAL } = {}
+) => {
+  switch (provider) {
+    case PROVIDER_TYPES.SPOTIFY:
+      return image;
+    case PROVIDER_TYPES.LAST_FM:
+    default:
+      return `https://lastfm.freetls.fastly.net/i/u/${size}/${image}`;
+  }
 };
 
 /**
@@ -84,4 +98,14 @@ export function listenToRef(key, modify) {
  */
 export function randomValue(arr) {
   return arr[Math.floor(arr.length * Math.random())];
+}
+
+export function getSpotifyUrl() {
+  const redirect_uri = encodeURIComponent(`${window.location.origin}/import`);
+
+  const scopes = ["user-library-read"].join(" ");
+  const importState = Math.round(Math.random() * 999999);
+
+  localStorage.setItem(SPOTIFY_IMPORT_STATE, importState);
+  return `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&redirect_uri=${redirect_uri}&scope=${scopes}&response_type=token&state=${importState}`;
 }

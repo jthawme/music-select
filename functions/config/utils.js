@@ -1,7 +1,6 @@
 import * as admin from "firebase-admin";
 
 import { RESPONSES } from "./constants";
-import serviceAccount from "./serviceAccount.json";
 
 export const firebase = admin.initializeApp({
   credential: admin.credential.cert({

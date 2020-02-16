@@ -28,7 +28,7 @@
 <div class="container">
   <div class="filter">
     <Wrapper>
-      <Label title="Filter">
+      <Label title="Search">
         <Input
           placeholder="Type here..."
           type="search"

@@ -73,9 +73,13 @@
 
     background-color: white;
 
-    padding-top: var(--size-header);
-
     overflow: auto;
+  }
+
+  .form {
+    padding-top: var(--size-header);
+    background-color: var(--color-accent-weak);
+    --color-background-light: white;
   }
 
   .results {
@@ -83,7 +87,7 @@
 
     padding: var(--size-unit-4) var(--size-unit-4) var(--size-action-bar);
 
-    background-color: var(--color-accent-weak);
+    background-color: var(--color-background-light);
   }
 
   .noResults {
@@ -110,9 +114,11 @@
 </style>
 
 <section>
-  <Wrapper>
-    <AddAlbumForm on:submit={onSubmit} />
-  </Wrapper>
+  <div class="form">
+    <Wrapper>
+      <AddAlbumForm on:submit={onSubmit} />
+    </Wrapper>
+  </div>
   <div class="results">
     {#if fetchAlbums}
       {#await fetchAlbums}

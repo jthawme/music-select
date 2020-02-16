@@ -17,7 +17,14 @@
   }
 
   main {
+    display: flex;
+
+    flex-direction: column;
+    min-height: 100vh;
+
     padding-top: var(--size-header);
+
+    overflow: hidden;
   }
 
   .title {
@@ -47,11 +54,38 @@
     }
   }
 
-  h1 {
-    font-size: var(--font-size-small);
-    text-align: center;
+  .content {
+    position: relative;
+
+    flex-grow: 1;
 
     margin-top: var(--size-unit-8);
+
+    background-color: var(--color-accent);
+
+    &:before {
+      position: absolute;
+
+      width: 120%;
+      height: var(--size-unit-8);
+
+      z-index: 0;
+
+      bottom: calc(100% - var(--size-unit-4));
+
+      content: "";
+
+      background-color: var(--color-accent);
+
+      transform: rotate(-5deg);
+    }
+  }
+
+  h1 {
+    position: relative;
+    z-index: 1;
+    font-size: var(--font-size-small);
+    text-align: center;
   }
 
   p {
@@ -62,11 +96,13 @@
     text-align: center;
     line-height: 1.4;
 
-    margin: var(--size-unit-2) auto;
+    padding: var(--size-unit-1) 0;
+    margin: 0 auto;
   }
 
   a {
-    color: var(--color-accent);
+    color: white;
+    text-decoration: none;
   }
 
   .login {
@@ -86,13 +122,15 @@
     <span>Music</span>
   </div>
 
-  <h1>Log in / Sign up</h1>
-  <div class="login">
-    <LoginButtons />
-  </div>
+  <div class="content">
+    <h1>Log in / Sign up</h1>
+    <div class="login">
+      <LoginButtons />
+    </div>
 
-  <p>Not bound by any platform, reconnect with the music in your life</p>
-  <p>
-    <a href="" use:link>How? Tell me more?</a>
-  </p>
+    <p>Not bound by any platform, reconnect with the music in your life</p>
+    <p>
+      <a href="" use:link>How? Tell me more?</a>
+    </p>
+  </div>
 </main>

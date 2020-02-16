@@ -21,13 +21,7 @@ const checkedLoggedIn = () => {
   }
 };
 
-export function addAlbum(batch, id, provider, artist, album, image, tags) {
-  const uid = getUid(artist, album);
-
-  if (get(albums).find(album => album.uid === uid)) {
-    return;
-  }
-
+export function addTags(batch, uid, tags) {
   const currentGenres = get(genres);
   tags.forEach(tag => {
     if (TOP_TAGS.includes(tag)) {
@@ -48,6 +42,16 @@ export function addAlbum(batch, id, provider, artist, album, image, tags) {
       );
     }
   });
+}
+
+export function addAlbum(batch, id, provider, artist, album, image, tags) {
+  const uid = getUid(artist, album);
+
+  if (get(albums).find(album => album.uid === uid)) {
+    return;
+  }
+
+  addTags(batch, uid, tags);
 
   batch.set(
     getAlbumsCollection().doc(uid),
@@ -102,27 +106,36 @@ const database = {
     const uid = getUid(artist, album);
     const currentListening = get(listening);
 
-    if (!currentListening.includes(uid)) {
-      const batch = db.batch();
-
-      currentListening.push(uid);
-
-      batch.set(
-        getInfoDocument(),
-        {
-          listening: currentListening
-        },
-        { merge: true }
-      );
-
-      batch.update(getAlbumsCollection().doc(uid), {
-        lastListened: new Date()
-      });
-
-      return batch.commit();
+    if (currentListening.includes(uid)) {
+      return Promise.reject("Not listening");
     }
 
-    return Promise.reject("Not listening");
+    return api
+      .info(null, artist, album)
+      .then(albumInfo => {
+        const batch = db.batch();
+        const genres = albumInfo.tags.tag.map(tag => prepareTag(tag.name));
+        addTags(batch, uid, genres);
+
+        return batch;
+      })
+      .then(batch => {
+        currentListening.push(uid);
+
+        batch.set(
+          getInfoDocument(),
+          {
+            listening: currentListening
+          },
+          { merge: true }
+        );
+
+        batch.update(getAlbumsCollection().doc(uid), {
+          lastListened: new Date()
+        });
+
+        return batch.commit();
+      });
   },
 
   /**

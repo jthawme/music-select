@@ -46,12 +46,30 @@
   .pool {
     flex-grow: 1;
   }
+
+  .center {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+  }
+
+  p {
+    text-align: center;
+    color: var(--color-background-dark);
+  }
 </style>
 
-<div class="pool">
-  <VirtualList itemHeight={88} items={albums} itemKey="uid" let:item>
+<div class="pool" class:center={albums.length === 0}>
+  {#if albums.length === 0}
     <Wrapper>
-      <AlbumCard {...item} />
+      <p>No albums added yet</p>
     </Wrapper>
-  </VirtualList>
+  {:else}
+    <VirtualList itemHeight={88} items={albums} itemKey="uid" let:item>
+      <Wrapper>
+        <AlbumCard {...item} />
+      </Wrapper>
+    </VirtualList>
+  {/if}
 </div>

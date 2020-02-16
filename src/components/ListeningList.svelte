@@ -13,17 +13,39 @@
 </script>
 
 <style lang="scss">
-  p {
-    margin-top: var(--size-unit-2);
+  .center {
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100%;
+
+    div {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-grow: 1;
+    }
+
+    p {
+      margin-top: var(--size-unit-2);
+      color: var(--color-background-dark);
+    }
   }
 </style>
 
-<Title icon="disc">Listening</Title>
+<div class:center={sorted.length === 0}>
+  <Title icon="disc">Listening</Title>
 
-{#each sorted as item (item.uid)}
-  <AlbumCard {...item} isListening />
-{/each}
+  {#each sorted as item (item.uid)}
+    <AlbumCard {...item} isListening />
+  {/each}
 
-{#if sorted.length === 0}
-  <p>Not listening to any albums</p>
-{/if}
+  {#if sorted.length === 0}
+    <div>
+      <p>Not listening to any albums</p>
+    </div>
+  {/if}
+</div>

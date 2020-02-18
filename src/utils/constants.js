@@ -61,7 +61,8 @@ export const IMAGE_SIZES = {
 
 export const PROVIDER_TYPES = {
   LAST_FM: "LAST_FM",
-  SPOTIFY: "SPOTIFY"
+  SPOTIFY: "SPOTIFY",
+  SEARCH: "SEARCH"
 };
 
 export const TOKEN_KEY = "music-select-token";

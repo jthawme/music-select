@@ -1,9 +1,12 @@
 <script>
+  import { PROVIDER_TYPES } from "../../utils/constants";
+  import { getImage } from "../../utils/utils";
   import LazyImage from "../Common/LazyImage.svelte";
 
   export let image = "";
   export let artist = "";
-  export let album = "";
+  export let name = "";
+  export let provider = PROVIDER_TYPES.SEARCH;
 </script>
 
 <style lang="scss">
@@ -47,11 +50,11 @@
 
 <div class="container">
   <div class="image">
-    <LazyImage src={image} alt="" />
+    <LazyImage src={getImage(image)} alt="" />
   </div>
   <div class="info">
     <p>
-      {album}
+      {name}
       <br />
       {artist}
     </p>

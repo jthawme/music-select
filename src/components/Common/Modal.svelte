@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher, onDestroy } from "svelte";
+  import { fade, fly } from "svelte/transition";
+  import { sineInOut } from "svelte/easing";
   import Portal from "svelte-portal";
   import Icon from "../Common/Icon.svelte";
 
@@ -82,9 +84,17 @@
 <svelte:window on:keydown={handle_keydown} />
 
 <Portal target={document.body}>
-  <div class="modal-background" on:click={close} />
+  <div
+    transition:fade={{ duration: 300 }}
+    class="modal-background"
+    on:click={close} />
 
-  <div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+  <div
+    transition:fly={{ duration: 300, y: 100, opacity: 0, easing: sineInOut }}
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    bind:this={modal}>
     <slot />
 
     <!-- svelte-ignore a11y-autofocus -->

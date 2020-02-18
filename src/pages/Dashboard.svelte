@@ -22,6 +22,10 @@
     width: 100%;
 
     z-index: 20;
+
+    @media screen and (min-width: 768px) {
+      width: 250px;
+    }
   }
 
   aside {
@@ -32,7 +36,12 @@
 
     width: 100%;
 
-    z-index: 20;
+    z-index: 15;
+
+    @media screen and (min-width: 768px) {
+      position: relative;
+      grid-area: nav;
+    }
   }
 
   main {
@@ -44,10 +53,23 @@
     :global(> *) {
       width: 100%;
     }
+
+    @media screen and (min-width: 768px) {
+      grid-area: content;
+      padding-bottom: 0;
+    }
   }
 
-  :global(body.locked) {
-    overflow: hidden;
+  :global(body) {
+    @media screen and (min-width: 768px) {
+      display: grid;
+
+      grid-template-areas:
+        "nav content"
+        "nav content";
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: var(--size-header) 1fr;
+    }
   }
 </style>
 

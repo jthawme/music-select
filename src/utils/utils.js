@@ -41,11 +41,11 @@ export const getImage = (
   { provider = PROVIDER_TYPES.LAST_FM, size = IMAGE_SIZES.NORMAL } = {}
 ) => {
   switch (provider) {
-    case PROVIDER_TYPES.SPOTIFY:
-      return image;
     case PROVIDER_TYPES.LAST_FM:
-    default:
       return `https://lastfm.freetls.fastly.net/i/u/${size}/${image}`;
+    case PROVIDER_TYPES.SPOTIFY:
+    default:
+      return image;
   }
 };
 

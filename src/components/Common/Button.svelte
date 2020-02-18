@@ -50,6 +50,12 @@
     border: 0;
 
     cursor: pointer;
+
+    border-color: var(--color-background-light);
+    border-width: 2px;
+    border-style: solid;
+
+    background-color: transparent;
   }
 
   .reverse {
@@ -57,20 +63,22 @@
   }
 
   .primary {
-    background-color: var(--color-accent);
-    color: white;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   .primary.weak {
-    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-dark);
+    color: var(--color-accent-dark);
   }
 
   .secondary {
-    background-color: var(--color-success);
-    color: white;
+    border-color: var(--color-success);
+    color: var(--color-success);
   }
 
   .tertiary {
+    border: 0;
     background-color: transparent;
     color: inherit;
   }

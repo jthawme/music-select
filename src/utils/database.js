@@ -100,14 +100,22 @@ const database = {
    * @param {string} artist
    * @param {string} album
    */
-  setListening: (artist, album) => {
+  setListening: (artist, album, update = false) => {
     checkedLoggedIn();
 
     const uid = getUid(artist, album);
     const currentListening = get(listening);
 
     if (currentListening.includes(uid)) {
-      return Promise.reject("Not listening");
+      if (update) {
+        return getAlbumsCollection()
+          .doc(uid)
+          .update({
+            lastListened: new Date()
+          });
+      } else {
+        return Promise.reject("Already listening");
+      }
     }
 
     return api

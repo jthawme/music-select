@@ -6,6 +6,7 @@
 
   import Suggestion from "../components/Suggestion.svelte";
   import ListeningList from "../components/ListeningList.svelte";
+  import StaleAlbums from "../components/StaleAlbums.svelte";
   import Button from "../components/Common/Button.svelte";
 
   let wantsNext = false;
@@ -90,7 +91,7 @@
 </style>
 
 <div class="container">
-  <div class="topbox">
+  <!-- <div class="topbox">
     {#if suggestion}
       <div
         class="suggestion"
@@ -115,9 +116,11 @@
       Something new
     </Button>
     <Button icon="zap" type="tertiary">Advanced</Button>
-  </section>
+  </section> -->
 
   <section class="listening">
     <ListeningList />
   </section>
+
+  <StaleAlbums/>
 </div>

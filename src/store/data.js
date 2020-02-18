@@ -47,6 +47,10 @@ export const sortedAlbums = derived(
   }
 );
 
+export const listeningAlbums = derived(sortedAlbums, $sortedAlbums => {
+  return $sortedAlbums.filter(album => album.isListening);
+});
+
 export function ownsAlbum(artist, album) {
   const uid = getUid(artist, album);
   return get(albums).find(album => album.uid === uid);

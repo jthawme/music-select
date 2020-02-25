@@ -57,5 +57,5 @@ export function ownsAlbum(artist, album) {
 }
 
 export function isListening(listening, uid) {
-  return listening.includes(uid);
+  return listening.some(obj => obj.uid === uid);
 }

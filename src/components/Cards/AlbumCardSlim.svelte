@@ -50,7 +50,7 @@
 
 <div class="container">
   <div class="image">
-    <LazyImage src={getImage(image)} alt="" />
+    <LazyImage src={getImage(image, { provider })} alt="" />
   </div>
   <div class="info">
     <p>

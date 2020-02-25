@@ -3,6 +3,7 @@
   import api from "../../utils/api";
   import database from "../../utils/database";
   import { albums, loading, ownsAlbum } from "../../store/data";
+  import { PROVIDER_TYPES } from "../../utils/constants";
 
   import Wrapper from "../Layout/Wrapper.svelte";
   import AddAlbumForm from "./AddAlbumForm.svelte";
@@ -132,8 +133,9 @@
         {#each convertAlbums(results.slice(0, resultsLength), $albums) as result}
           <AlbumCardSlim
             artist={result.artist}
-            album={result.name}
-            image={result.image[result.image.length - 1]['#text']}>
+            name={result.name}
+            image={result.image[result.image.length - 1]['#text']}
+            provider={PROVIDER_TYPES.SEARCH}>
             {#if result.owns}
               <Icon name="check" />
             {:else}

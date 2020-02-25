@@ -17,6 +17,7 @@ export async function handler(event, context) {
     const data = await getAlbumInfo(albumMbid, artist, album);
 
     if (data.error) {
+      console.log("error", data.error);
       return RESPONSES.NO_ALBUM;
     }
 

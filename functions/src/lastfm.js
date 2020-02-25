@@ -34,7 +34,7 @@ const safeFetch = url => {
 export const searchAlbum = albumName => {
   return safeFetch(
     urlBuilder(METHODS.SEARCH, {
-      album: albumName
+      album: encodeUriComponent(albumName)
     })
   );
 };
@@ -45,8 +45,8 @@ export const getAlbumInfo = (mbid, artist, album) => {
         mbid
       }
     : {
-        artist,
-        album
+        artist: encodeUriComponent(artist),
+        album: encodeUriComponent(album)
       };
 
   return safeFetch(urlBuilder(METHODS.INFO, args));

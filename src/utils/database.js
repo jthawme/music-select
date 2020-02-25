@@ -128,7 +128,10 @@ const database = {
         return batch;
       })
       .then(batch => {
-        currentListening.push(uid);
+        currentListening.push({
+          uid,
+          day: new Date().getDay()
+        });
 
         batch.set(
           getInfoDocument(),
